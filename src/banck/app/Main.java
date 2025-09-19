@@ -269,8 +269,19 @@ public class Main {
     }
 
     private static void appliquerInteretsCompte() {
-       
-        System.out.println(ROUGE + "Fonctionnalité non implémentée" + RESET);
+        try {
+            Compte compte = selectionnerCompte();
+            if (compte == null) return;
+
+            if (compte instanceof CompteEpargne) {
+                ((CompteEpargne) compte).appliquerInterets();
+                System.out.println(VERT + "✅ Intérêts appliqués avec succès" + RESET);
+            } else {
+                System.out.println(ROUGE + "❌ Cette fonctionnalité est réservée aux comptes épargne" + RESET);
+            }
+        } catch (Exception e) {
+            System.out.println(ROUGE + "❌ Erreur lors de l'application des intérêts: " + e.getMessage() + RESET);
+        }
     }
 
     private static void listerTousComptes() {
