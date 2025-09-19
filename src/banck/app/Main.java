@@ -317,7 +317,7 @@ public class Main {
             double montant = lireDoubleSecurise("Montant : ");
             lecteur.nextLine();
             
-            if (!ValidationUtils.estMontantValide(montant)) {
+            if (montant <= 0) {
                 System.out.println(ROUGE + "❌ Montant invalide" + RESET);
                 return;
             }

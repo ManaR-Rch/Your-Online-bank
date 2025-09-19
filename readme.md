@@ -1,245 +1,154 @@
-# Système de Gestion de Comptes Bancaires
+# Système de Gestion Bancaire
 
 ## Description du projet
 
-Ce projet est une application console développée en Java 8 pour automatiser la gestion des comptes bancaires. Elle permet aux utilisateurs de créer et gérer différents types de comptes (courant et épargne), d'effectuer des opérations bancaires (versements, retraits, virements) et de consulter l'historique des transactions.
-
-L'application respecte une architecture en couches et implémente les principes SOLID pour garantir un code maintenable et extensible.
+Application console Java 8 pour la gestion complète des comptes bancaires. Ce système permet de créer et gérer des comptes courants et épargne, effectuer des opérations bancaires (versements, retraits, virements), et consulter l'historique des transactions.
 
 ## Technologies utilisées
 
-- **Java 8** (JDK 8)
-- **Java Time API** pour la gestion des dates
-- **Collections Framework** (ArrayList, HashMap)
-- **UUID** pour les identifiants uniques
-- **Git** pour le contrôle de version
-- **Eclipse IDE** pour le développement
-- **JIRA** pour la gestion de projet
-- **MySQL & JDBC** (bonus - persistance des données)
+- Java 8 (JDK 1.8)
+- Java Time API
+- Collections Framework
+- UUID
+- Stream API
+- Optional
+- Expressions Lambda
 
 ## Structure du projet
 
 ```
-src/
-├── presentation/
-│   ├── MainMenu.java
-│   └── ConsoleUtils.java
-├── metier/
-│   ├── entities/
-│   │   ├── Compte.java (classe abstraite)
-│   │   ├── CompteCourant.java
-│   │   ├── CompteEpargne.java
-│   │   ├── Operation.java (classe abstraite)
-│   │   ├── Versement.java
-│   │   └── Retrait.java
-│   └── services/
-│       ├── CompteService.java
-│       └── OperationService.java
-├── utilitaire/
-│   ├── ValidationUtils.java
-│   ├── FormatUtils.java
-│   └── Constants.java
-└── Main.java
+banck/
+├── app/
+│   ├── Main.java
+│   ├── Client.java
+│   ├── Compte.java
+│   ├── CompteCourant.java
+│   ├── CompteEpargne.java
+│   ├── Operation.java
+│   ├── Versement.java
+│   └── Retrait.java
+└── util/
+    └── ValidationUtils.java
 ```
 
-### Architecture en couches
+## Fonctionnalités implémentées
 
-1. **Couche de présentation** : Gestion de l'interface utilisateur et des menus
-2. **Couche métier** : Logique métier et entités du domaine
-3. **Couche utilitaire** : Classes d'aide et utilitaires
-
-## Fonctionnalités principales
-
-### Gestion des comptes
-- ✅ Création de comptes courants avec découvert autorisé
-- ✅ Création de comptes épargne avec taux d'intérêt
-- ✅ Validation du format de code compte (CPT-XXXXX)
-- ✅ Consultation du solde
-
-### Opérations bancaires
-- ✅ Versements avec source (ex: "Salaire", "Virement externe")
-- ✅ Retraits avec destination (ex: "Distributeur ATM", "Chèque")
-- ✅ Virements entre comptes internes
-- ✅ Calcul automatique des intérêts pour les comptes épargne
-
-### Consultation et historique
-- ✅ Affichage du solde d'un compte
-- ✅ Historique complet des opérations par compte
-- ✅ Détails des transactions avec dates et montants
-
-### Règles métier
-- **Compte Courant** : Retrait possible jusqu'à la limite du découvert
-- **Compte Épargne** : Retrait uniquement si solde suffisant
-- **Validation** : Montants positifs, format des codes, saisies utilisateur
-
-## Fonctionnalités bonus
-
-- 🔄 **Stream API** pour le filtrage des comptes et opérations
-- 💾 **Persistance MySQL** avec JDBC
-- 🔧 **Expressions Lambda** pour les traitements fonctionnels
-- ⚡ **Optional** pour la gestion des valeurs nulles
-
-## Prérequis
-
-### Logiciels requis
-- **JDK 8** (obligatoire - aucune autre version)
-- **Eclipse IDE**
-- **Git**
-- **MySQL** (pour la persistance - bonus)
-
-### Installation de Java 8
-```bash
-# Vérifier la version Java
-java -version
-javac -version
-
-# La sortie doit afficher Java 1.8.x
-```
+- Gestion des clients avec identifiant auto-incrémenté
+- Création de comptes avec format CPT-XXXXX validé
+- Comptes courants avec découvert autorisé
+- Comptes épargne avec taux d'intérêt annuel
+- Versements avec source spécifiée
+- Retraits avec destination spécifiée
+- Virements entre comptes avec rollback automatique
+- Historique détaillé de toutes les opérations
+- Calcul des intérêts mensuels pour comptes épargne
+- Validation stricte des formats et montants
+- Interface colorée avec codes ANSI
 
 ## Installation et exécution
 
-### 1. Cloner le repository
+### Prérequis
+- JDK 8 (version 1.8.x)
+- Terminal supportant les couleurs ANSI
+
+### Vérification de l'installation
 ```bash
-git clone https://github.com/votre-username/banking-system.git
-cd banking-system
+java -version
+javac -version
 ```
 
-### 2. Compilation
+### Compilation
 ```bash
-# Compilation des sources
-javac -d bin src/**/*.java
-
-# Ou utiliser le script de compilation
-./compile.sh
+mkdir bin
+javac -d bin -cp . banck/app/*.java banck/util/*.java
 ```
 
-### 3. Création du JAR
+### Création du JAR
 ```bash
-# Créer le fichier JAR exécutable
-jar cfm banking-system.jar MANIFEST.MF -C bin .
+jar cfe BanqueApp.jar banck.app.Main -C bin .
 ```
 
-### 4. Exécution
+### Exécution
 ```bash
-# Exécuter l'application
-java -jar banking-system.jar
+# Via le JAR
+java -jar BanqueApp.jar
 
 # Ou directement
-java -cp bin Main
+java -cp bin banck.app.Main
 ```
 
-## Utilisation
+## Menu principal
 
-### Menu principal
 ```
-=== SYSTÈME DE GESTION BANCAIRE ===
-1. Créer un compte
-2. Effectuer un versement
-3. Effectuer un retrait
-4. Effectuer un virement
-5. Consulter le solde
-6. Consulter l'historique des opérations
-7. Quitter
-```
-
-### Exemples d'utilisation
-
-#### Création d'un compte
-- Choisir le type (Courant/Épargne)
-- Le code sera généré automatiquement (format : CPT-XXXXX)
-- Définir le solde initial
-- Pour compte courant : définir le découvert autorisé
-- Pour compte épargne : définir le taux d'intérêt
-
-#### Opérations bancaires
-- Saisir le code du compte
-- Indiquer le montant (validation automatique)
-- Spécifier la source/destination selon l'opération
-
-## Captures d'écran
-
-### Menu principal
-```
-=== SYSTÈME DE GESTION BANCAIRE ===
-1. Créer un compte
-2. Effectuer un versement
-3. Effectuer un retrait
-4. Effectuer un virement
-5. Consulter le solde
-6. Consulter l'historique des opérations
-7. Quitter
-Votre choix : 
+╔══════════════════════════════════╗
+║        GESTION BANCAIRE          ║
+╠══════════════════════════════════╣
+║ 1. Créer un client               ║
+║ 2. Créer un compte               ║
+║ 3. Effectuer un versement        ║
+║ 4. Effectuer un retrait          ║
+║ 5. Effectuer un virement         ║
+║ 6. Consulter solde               ║
+║ 7. Voir historique opérations    ║
+║ 8. Appliquer intérêts (Épargne)  ║
+║ 9. Lister tous les comptes       ║
+║ 10. Quitter                      ║
+╚══════════════════════════════════╝
 ```
 
-### Création de compte
+## Règles métier
+
+### Compte Courant
+- Retrait autorisé jusqu'au découvert maximum
+- Pas d'intérêts calculés
+- Solde peut être négatif dans la limite du découvert
+
+### Compte Épargne
+- Retrait uniquement si solde suffisant
+- Intérêts mensuels calculés sur le solde
+- Taux d'intérêt annuel personnalisable
+
+### Validation des données
+- Format code compte : CPT-XXXXX (5 chiffres)
+- Montants doivent être positifs
+- Client doit exister pour créer un compte
+- Gestion des erreurs de saisie
+
+## Architecture
+
+L'application respecte les principes SOLID et une architecture en couches :
+
+1. **Couche de présentation** : Main.java
+2. **Couche métier** : Classes Compte, Operation, Client
+3. **Couche utilitaire** : ValidationUtils.java
+
+## Exemples d'utilisation
+
+### Création d'un compte épargne
 ```
-=== CRÉATION DE COMPTE ===
-1. Compte Courant
-2. Compte Épargne
-Choisissez le type de compte : 1
-Code généré : CPT-12345
-Solde initial : 1000.00
-Découvert autorisé : 500.00
-✅ Compte courant créé avec succès !
+=== CRÉATION COMPTE ===
+Code compte (CPT-XXXXX) : CPT-00123
+Solde initial : 5000
+Taux d'intérêt annuel (%) : 3.5
+✅ Compte créé avec succès
 ```
 
-### Historique des opérations
+### Virement entre comptes
 ```
-=== HISTORIQUE DU COMPTE CPT-12345 ===
-ID: 550e8400-e29b-41d4-a716-446655440001
-Date: 2025-09-18 14:30:25
-Type: VERSEMENT
-Montant: +500.00 €
-Source: Salaire
-Solde après opération: 1500.00 €
-----------------------------------------
+=== VIREMENT ===
+Compte source : CPT-00123 - Solde: 5000.0 - Client: John Doe
+Compte destination : CPT-00124 - Solde: 3000.0 - Client: Jane Smith
+Montant : 1000
+✅ Virement de 1000.0 DH effectué avec succès
 ```
 
-## Bonnes pratiques implémentées
+## Support
 
-### Principes SOLID
-- ✅ **S**ingle Responsibility : Chaque classe a une responsabilité unique
-- ✅ **O**pen/Closed : Extension possible sans modification
-- ✅ **L**iskov Substitution : Les sous-classes respectent le contrat
-- ✅ **I**nterface Segregation : Interfaces spécialisées
-- ✅ **D**ependency Inversion : Dépendances vers les abstractions
-
-### Anti-patterns évités
-- ❌ God Class
-- ❌ Mélange logique métier/affichage
-- ❌ Couplage fort
-- ❌ Violation de l'encapsulation
-
-## Structure Git
-
-Le projet suit une approche Git avec des commits réguliers et descriptifs :
-- `feat:` nouvelles fonctionnalités
-- `fix:` corrections de bugs
-- `refactor:` refactorisation du code
-- `docs:` documentation
-
-## Tests et validation
-
-- ✅ Validation des formats de saisie
-- ✅ Gestion des exceptions
-- ✅ Tests des règles métier
-- ✅ Vérification des contraintes bancaires
-
-## Contributions
-
-Ce projet est développé dans le cadre d'une formation. Les contributions externes ne sont pas acceptées pour le moment.
+Pour toute question :
+- Consulter cette documentation
+- Vérifier les prérequis d'installation
+- S'assurer d'utiliser Java 8
 
 ## Licence
 
-Ce projet est développé à des fins pédagogiques.
-
-## Auteur
-
-**Votre Nom**
-- Formation : [Nom de la formation]
-- Date : 16-19 Septembre 2025
-- Contact : votre.email@example.com
-
----
-
-**Note** : Ce projet respecte les exigences du cahier des charges et démontre la maîtrise des concepts Java 8, de l'architecture logicielle et des bonnes pratiques de développement.
+Projet développé à des fins pédagogiques dans le cadre d'une formation Java.
