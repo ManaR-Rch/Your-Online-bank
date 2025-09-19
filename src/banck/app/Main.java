@@ -3,6 +3,8 @@ package banck.app;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.InputMismatchException;
+
 
 public class Main {
     private static final String RESET = "\u001B[0m";
@@ -16,6 +18,30 @@ public class Main {
     private static Map<Integer, Client> registreClients = new HashMap<>();
     private static Scanner lecteur = new Scanner(System.in);
 
+    private static int lireEntierSecurise(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                return lecteur.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println(ROUGE + "❌ Veuillez entrer un nombre valide" + RESET);
+                lecteur.nextLine();
+            }
+        }
+    }
+
+    private static double lireDoubleSecurise(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                return lecteur.nextDouble();
+            } catch (InputMismatchException e) {
+                System.out.println(ROUGE + "❌ Veuillez entrer un nombre valide" + RESET);
+                lecteur.nextLine();
+            }
+        }
+    }
+
     public static boolean validerFormatCode(String code) {
         return code.matches("^CPT-\\d{5}$");
     }
@@ -28,11 +54,12 @@ public class Main {
         System.out.println("║ 2. Créer un compte                ║");
         System.out.println("║ 3. Effectuer un versement         ║");
         System.out.println("║ 4. Effectuer un retrait           ║");
-        System.out.println("║ 5. Consulter solde                ║");
-        System.out.println("║ 6. Voir historique opérations     ║");
-        System.out.println("║ 7. Appliquer intérêts (Épargne)   ║");
-        System.out.println("║ 8. Lister tous les comptes        ║");
-        System.out.println(ROUGE + "║ 9. Quitter                         ║");
+        System.out.println("║ 5. Effectuer un virement          ║");
+        System.out.println("║ 6. Consulter solde                ║");
+        System.out.println("║ 7. Voir historique opérations     ║");
+        System.out.println("║ 8. Appliquer intérêts (Épargne)   ║");
+        System.out.println("║ 9. Lister tous les comptes        ║");
+        System.out.println(ROUGE + "║ 10. Quitter                        ║");
         System.out.println(CYAN + "╚══════════════════════════════════╝" + RESET);
         System.out.print(JAUNE + "Votre choix : " + RESET);
     }
@@ -42,41 +69,48 @@ public class Main {
 
         do {
             afficherMenuPrincipal();
-            choix = lecteur.nextInt();
+            choix = lireEntierSecurise("");
             lecteur.nextLine();
 
-            switch (choix) {
-                case 1:
-                    creerNouveauClient();
-                    break;
-                case 2:
-                    creerNouveauCompte();
-                    break;
-                case 3:
-                    effectuerOperationVersement();
-                    break;
-                case 4:
-                    effectuerOperationRetrait();
-                    break;
-                case 5:
-                    consulterSoldeCompte();
-                    break;
-                case 6:
-                    consulterHistoriqueOperations();
-                    break;
-                case 7:
-                    appliquerInteretsCompte();
-                    break;
-                case 8:
-                    listerTousComptes();
-                    break;
-                case 9:
-                    System.out.println(VERT + "👋 Au revoir !" + RESET);
-                    break;
-                default:
-                    System.out.println(ROUGE + "❌ Choix invalide" + RESET);
+            try {
+                switch (choix) {
+                    case 1:
+                        creerNouveauClient();
+                        break;
+                    case 2:
+                        creerNouveauCompte();
+                        break;
+                    case 3:
+                        effectuerOperationVersement();
+                        break;
+                    case 4:
+                        effectuerOperationRetrait();
+                        break;
+                    case 5:
+                        effectuerVirement();
+                        break;
+                    case 6:
+                        consulterSoldeCompte();
+                        break;
+                    case 7:
+                        consulterHistoriqueOperations();
+                        break;
+                    case 8:
+                        appliquerInteretsCompte();
+                        break;
+                    case 9:
+                        listerTousComptes();
+                        break;
+                    case 10:
+                        System.out.println(VERT + "👋 Au revoir !" + RESET);
+                        break;
+                    default:
+                        System.out.println(ROUGE + "❌ Choix invalide" + RESET);
+                }
+            } catch (Exception e) {
+                System.out.println(ROUGE + "❌ Une erreur inattendue s'est produite: " + e.getMessage() + RESET);
             }
-        } while (choix != 9);
+        } while (choix != 10);
     }
 
     private static void creerNouveauClient() {
@@ -98,7 +132,7 @@ public class Main {
 
         System.out.println(CYAN + "\n=== CRÉATION COMPTE ===" + RESET);
         
-        // Sélection client
+        
         System.out.println("Clients disponibles:");
         for (Client client : registreClients.values()) {
             System.out.println("ID: " + client.getIdentifiant() + " - " + client.getNomComplet());
@@ -114,7 +148,7 @@ public class Main {
             return;
         }
 
-        // Code compte
+        
         System.out.print("Code compte (CPT-XXXXX) : ");
         String code = lecteur.nextLine();
         
@@ -127,12 +161,12 @@ public class Main {
             return;
         }
 
-        // Solde initial
+      
         System.out.print("Solde initial : ");
         double solde = lecteur.nextDouble();
         lecteur.nextLine();
 
-        // Type compte
+      
         System.out.println("Type de compte:");
         System.out.println("1. Compte Courant");
         System.out.println("2. Compte Épargne");
@@ -235,7 +269,7 @@ public class Main {
     }
 
     private static void appliquerInteretsCompte() {
-        // À implémenter
+       
         System.out.println(ROUGE + "Fonctionnalité non implémentée" + RESET);
     }
 
@@ -272,10 +306,10 @@ public class Main {
             return;
         }
         
-        // Retrait du compte source
+        
         source.effectuerRetrait(montant, "Virement vers " + destination.getCodeCompte());
         
-        // Versement sur compte destination
+        
         destination.effectuerVersement(montant, "Virement de " + source.getCodeCompte());
         
         System.out.println("✅ Virement effectué avec succès");
