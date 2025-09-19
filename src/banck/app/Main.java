@@ -298,31 +298,53 @@ public class Main {
     }
 
     private static void effectuerVirement() {
-        System.out.println("=== VIREMENT ===");
-        
-        System.out.println("Compte source :");
-        Compte source = selectionnerCompte();
-        if (source == null) return;
-        
-        System.out.println("Compte destination :");
-        Compte destination = selectionnerCompte();
-        if (destination == null) return;
-        
-        System.out.print("Montant : ");
-        double montant = lecteur.nextDouble();
-        lecteur.nextLine();
-        
-        if (montant <= 0) {
-            System.out.println("❌ Montant invalide");
-            return;
+        try {
+            System.out.println(CYAN + "\n=== VIREMENT ===" + RESET);
+            
+            System.out.println("Compte source :");
+            Compte source = selectionnerCompte();
+            if (source == null) return;
+            
+            System.out.println("Compte destination :");
+            Compte destination = selectionnerCompte();
+            if (destination == null) return;
+            
+            if (source.getCodeCompte().equals(destination.getCodeCompte())) {
+                System.out.println(ROUGE + "❌ Impossible de faire un virement vers le même compte" + RESET);
+                return;
+            }
+            
+            double montant = lireDoubleSecurise("Montant : ");
+            lecteur.nextLine();
+            
+            if (!ValidationUtils.estMontantValide(montant)) {
+                System.out.println(ROUGE + "❌ Montant invalide" + RESET);
+                return;
+            }
+            
+           
+            double soldeSourceInitial = source.getSoldeCompte();
+            double soldeDestInitial = destination.getSoldeCompte();
+            
+            try {
+               
+                source.effectuerRetrait(montant, "Virement vers " + destination.getCodeCompte());
+                
+                
+                destination.effectuerVersement(montant, "Virement de " + source.getCodeCompte());
+                
+                System.out.println(VERT + "✅ Virement de " + montant + " DH effectué avec succès" + RESET);
+                System.out.println(VERT + "✅ De: " + source.getCodeCompte() + " → Vers: " + destination.getCodeCompte() + RESET);
+                
+            } catch (Exception e) {
+               
+                source.modifierSolde(soldeSourceInitial);
+                destination.modifierSolde(soldeDestInitial);
+                System.out.println(ROUGE + "❌ Erreur lors du virement: " + e.getMessage() + RESET);
+            }
+            
+        } catch (Exception e) {
+            System.out.println(ROUGE + "❌ Erreur lors du virement: " + e.getMessage() + RESET);
         }
-        
-        
-        source.effectuerRetrait(montant, "Virement vers " + destination.getCodeCompte());
-        
-        
-        destination.effectuerVersement(montant, "Virement de " + source.getCodeCompte());
-        
-        System.out.println("✅ Virement effectué avec succès");
     }
 }
